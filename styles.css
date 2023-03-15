@@ -14,7 +14,6 @@
 
 .calculator{
   width: 430px;
-  height: 550px;
   background-color: #aaa;
   padding: 24px;
   border: 2px solid black;
@@ -24,7 +23,6 @@
 .screen {
   background-color: #EEEEEE;
   width: 100%;
-  height: 120px;
   border: 2px solid black;
   border-radius: 4px;
   margin-bottom: 20px;
@@ -41,6 +39,7 @@
   font-size: 18px;
   align-items: center;
   justify-content: flex-end;
+  flex-wrap: wrap;
   padding-top: 20px;
   padding-right: 20px;
 }
@@ -52,6 +51,7 @@
   display: flex;
   align-items: center;
   justify-content: flex-end;
+  flex-wrap: wrap;
   padding-right: 20px;
 }
 
