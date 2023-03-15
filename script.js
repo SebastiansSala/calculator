@@ -1,8 +1,8 @@
 let display = [];
 let operadores = [];
-let values = [];
-let mainValues = [];
-let ans = 0;
+  let values = [];
+  let mainValues = [];
+  let ans = 0;
 
 function sum(value) {
   return value.reduce((acum, values) => {
@@ -11,12 +11,10 @@ function sum(value) {
   }, 0);
 }
 
-function substract(value) {
-  return value.reduce((acum, values) => {
-    acum -= values;
-    return acum;
-  }, 0);
+function substract(value){ 
+  return value[0] - value[1]
 }
+
 function multiply(value) {
   return value.reduce((acum, values) => {
     acum *= values;
@@ -31,21 +29,24 @@ function divide(value) {
   }, 1);
 }
 
-function showResult() {
-  const ans = operate(operadores, mainValues);
-  document.querySelector(".result").innerHTML = ans;
-  operadores.pop();
+function operate(operadores, values) {
+  if (operadores[0] === "+") {
+    return sum(values);
+  } else if (operadores[0] === "-") {
+    return substract(values);
+  } else if (operadores[0] === "x") {
+    return multiply(values);
+  } else if (operadores[0] === "/") {
+    return divide(values);
+  }
 }
 
-function operate(operator, values) {
-  if (operator[1] === "+") {
-    return sum(values);
-  } else if (operator[1] === "-") {
-    return substract(values);
-  } else if (operator[1] === "x") {
-    return multiply(values);
-  } else if (operator[1] === "/") {
-    return divide(values);
+function showResult() {
+  if(operadores.length === 2){
+    mainValues = [operate(operadores, mainValues)];
+    document.querySelector(".result").innerHTML = mainValues;
+  }else{
+    document.querySelector(".result").innerHTML = `${mainValues}${operadores}`;
   }
 }
 
@@ -76,29 +77,28 @@ function main() {
     element.addEventListener("click", () => {
       if (element.textContent === "AC") {
         clear();
-        console.log(mainValues);
       } else if (element.textContent === "C") {
         remove();
-        console.log(mainValues);
-      } else {
-        if (element.textContent.match(/\+|\-|\x|\/|\=/)) {
+      } else if (element.textContent.match(/\+|\-|\x|\//)) {
           operadores.push(element.textContent);
           mainValues.push(parseInt(ans));
           values.length = 0;
           clearScreen();
-          console.log(mainValues);
-        } else {
+          showResult();
+          console.log(mainValues)
+          console.log(operadores)
+          console.log(ans)
+          console.log(display)
+        }else if(element.textContent.match(/=/)){
+          document.querySelector(".result").innerHTML = '';
+        }else {
           const newItem = document.createElement("div");
           newItem.textContent = element.textContent;
           document.querySelector(".showOnScreen").appendChild(newItem);
           display.push(newItem);
-          values.push(element.textContent);
+          values.push(newItem.textContent);
           ans = values.join("");
         }
-        if (operadores.length === 2) {
-          showResult();
-        }
-      }
     });
   });
 }
