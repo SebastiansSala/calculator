@@ -1,106 +1,156 @@
 let display = [];
-let operadores = [];
-  let values = [];
-  let mainValues = [];
-  let ans = 0;
+let ans = "0";
+let operator;
+let values = [];
+let operands = [];
+let count = 0;
 
 function sum(value) {
-  return value.reduce((acum, values) => {
-    acum += values;
-    return acum;
-  }, 0);
+  return value.reduce((acum, val) => acum + val, 0);
 }
 
-function substract(value){ 
-  return value[0] - value[1]
+function subtract(value) {
+  return value.reduce((acum, val) => acum - val);
 }
 
 function multiply(value) {
-  return value.reduce((acum, values) => {
-    acum *= values;
-    return acum;
-  }, 1);
+  return value.reduce((acum, val) => acum * val, 1);
 }
 
 function divide(value) {
-  return value.reduce((acum, values) => {
-    acum /= values;
-    return acum;
-  }, 1);
-}
-
-function operate(operadores, values) {
-  if (operadores[0] === "+") {
-    return sum(values);
-  } else if (operadores[0] === "-") {
-    return substract(values);
-  } else if (operadores[0] === "x") {
-    return multiply(values);
-  } else if (operadores[0] === "/") {
-    return divide(values);
+  if (value[1] === 0) {
+    alert("Invalid division");
   }
+  return value[0] / value[1];
 }
 
 function showResult() {
-  if(operadores.length === 2){
-    mainValues = [operate(operadores, mainValues)];
-    document.querySelector(".result").innerHTML = mainValues;
-  }else{
-    document.querySelector(".result").innerHTML = `${mainValues}${operadores}`;
+  const result = operate();
+  displayNumber(result);
+  operands.length = 0;
+  operands.push(result);
+}
+
+function operate() {
+  switch (operator) {
+    case "+":
+      return sum(operands);
+    case "-":
+      return subtract(operands);
+    case "x":
+      return multiply(operands);
+    case "/":
+      return divide(operands);
+    default:
+      throw new Error("Invalid operator");
   }
 }
 
 function clear() {
-  document.querySelector(".showOnScreen").innerHTML = "";
-  display.forEach((element) => {
-    element.remove();
-  });
+  clearScreen();
   display.length = 0;
+  values.length = 0;
+  ans = "0";
+  operands.length = 0;
+  displayNumber("");
 }
 
 function remove() {
   const lastItem = display.pop();
   if (lastItem) {
     lastItem.remove();
+    values.pop();
+    ans = values.join("");
+  } else {
+    ans = "0";
   }
 }
 
 function clearScreen() {
   document.querySelector(".showOnScreen").innerHTML = "";
-  display.forEach((element) => {
-    element.remove();
-  });
+}
+
+function displayNumber(number) {
+  document.querySelector(".result").innerHTML = number;
 }
 
 function main() {
-  document.querySelectorAll(".item").forEach((element) => {
+  const items = document.querySelectorAll('.item');
+
+  items.forEach((element) => {
     element.addEventListener("click", () => {
-      if (element.textContent === "AC") {
+      const text = element.textContent;
+      if (text === "AC") {
         clear();
-      } else if (element.textContent === "C") {
+      } else if (text === "C") {
         remove();
-      } else if (element.textContent.match(/\+|\-|\x|\//)) {
-          operadores.push(element.textContent);
-          mainValues.push(parseInt(ans));
-          values.length = 0;
-          clearScreen();
+      } else if (text.match(/\+|\-|\x|\//)) {
+        operands.push(parseFloat(ans));
+        if (operands.length === 2) {
           showResult();
-          console.log(mainValues)
-          console.log(operadores)
-          console.log(ans)
-          console.log(display)
-        }else if(element.textContent.match(/=/)){
-          document.querySelector(".result").innerHTML = '';
-        }else {
+        }
+        operator = text;
+        clearScreen();
+        values.length = 0;
+      } else if (text.match(/=/)) {
+        operands.push(parseFloat(ans));
+        showResult();
+        clearScreen();
+        values.length = 0;
+      } else if (text === ".") {
+        if (!values.includes(".")) {
           const newItem = document.createElement("div");
-          newItem.textContent = element.textContent;
+          newItem.textContent = text;
           document.querySelector(".showOnScreen").appendChild(newItem);
           display.push(newItem);
-          values.push(newItem.textContent);
+          values.push(text);
           ans = values.join("");
         }
+      } else if (text.match(/[0-9]/)) {
+        const newItem = document.createElement("div");
+        newItem.textContent = text;
+        document.querySelector(".showOnScreen").appendChild(newItem);
+        display.push(newItem);
+        values.push(text);
+        ans = values.join("");
+      }
     });
+  });
+
+  document.addEventListener("keydown", (event) => {
+    const key = event.key;
+    if(key === '/'){
+      event.preventDefault();
+    }
+    if (key === "Escape") {
+      clear();
+    } else if (key === "Backspace") {
+      remove();
+    } else if (key.match(/[0-9\.]/)) {
+      const newItem = document.createElement("div");
+      newItem.textContent = key;
+      document.querySelector(".showOnScreen").appendChild(newItem);
+      display.push(newItem);
+      values.push(key);
+      ans = values.join("");
+    } else if (key.match(/\+|\-|\x|\//)) {
+      operands.push(parseFloat(ans));
+      if (operands.length === 2) {
+        showResult();
+      }
+      operator = key;
+      clearScreen();
+      values.length = 0;
+    } else if (key === "Enter") {
+      operands.push(parseFloat(ans));
+      showResult();
+      clearScreen();
+      values.length = 0;
+    }
   });
 }
 
 main();
+
+
+
